@@ -1,0 +1,11 @@
+08/12
+Starting philosophers.
+
+Tasks that spend much of their time waiting for external events are
+generally good candidates for threading. 
+
+linked list?
+how to use threads?
+
+13/12
+TODO: Initalize threads and mutexes, start the threads.

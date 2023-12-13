@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:03:48 by glambrig          #+#    #+#             */
-/*   Updated: 2023/12/13 19:06:50 by glambrig         ###   ########.fr       */
+/*   Updated: 2023/12/13 19:26:37 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ void	*func(void *n)
 // 	}
 // }
 
-void	init_philo_struct(int nb_philos, int time_to_die,
+void	init_general_struct(int nb_philos, int time_to_die,
 	int time_to_eat, int time_to_sleep, t_general *general)
 {
-	general = malloc(sizeof(int) * 5 + 1);
+	general = malloc(sizeof(t_general));
 	if (!(general))
 		write_error("Malloc failed\n");
 	general->num_of_phis = nb_philos;
@@ -52,7 +52,7 @@ int	main(int ac, char **av)
 	if (ac < 5 || atoi(av[1]) <= 0 || atoi(av[2]) <= 0 || atoi(av[3]) <= 0
 		|| atoi(av[4]) <= 0)
 		write_error("Argument error\n");
-	init_philo_struct(atoi(av[1]), atoi(av[2]), atoi(av[3]),
+	init_general_struct(atoi(av[1]), atoi(av[2]), atoi(av[3]),
 		atoi(av[4]), &general);
 	//init_threads(&philos, atoi(av[1]));
 	if (av[5] != NULL)
