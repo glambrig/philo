@@ -9,3 +9,5 @@ how to use threads?
 
 13/12
 TODO: Initalize threads and mutexes, start the threads.
+	Watch the tutorial about creating threads in a loop, that'll fix the 
+	present segfault. (It's codevault iirc)
