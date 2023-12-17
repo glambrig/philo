@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 15:32:29 by glambrig          #+#    #+#             */
-/*   Updated: 2023/12/13 19:31:06 by glambrig         ###   ########.fr       */
+/*   Updated: 2023/12/15 15:25:40 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <pthread.h>
+# include <errno.h>	//For global errno var, used to diagnose errors
 
 typedef	struct	s_philo
 {
@@ -42,6 +43,13 @@ typedef struct	s_general
 	unsigned long long	times_each_must_eat;
 }	t_general;
 
+/*Error and utility functions*/
 void	write_error(char *s);
+void	*ft_calloc(size_t nmemb, size_t size);
+int	ft_atoi(char *s);
+
+/*Init functions*/
+void	init_t_general(int nb_philos, int time_to_die,int time_to_eat,
+	int time_to_sleep, t_general **general);
 
 #endif
