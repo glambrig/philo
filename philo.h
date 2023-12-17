@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 15:32:29 by glambrig          #+#    #+#             */
-/*   Updated: 2023/12/15 15:25:40 by glambrig         ###   ########.fr       */
+/*   Updated: 2023/12/17 18:18:51 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ typedef struct	s_general
 	unsigned long long	time_to_eat;
 	unsigned long long	time_to_sleep;
 	unsigned long long	times_each_must_eat;
+	t_philo				*philo;
+	pthread_mutex_t 	mutex;
 }	t_general;
 
 /*Error and utility functions*/
@@ -51,5 +53,9 @@ int	ft_atoi(char *s);
 /*Init functions*/
 void	init_t_general(int nb_philos, int time_to_die,int time_to_eat,
 	int time_to_sleep, t_general **general);
+
+/*Algorithm*/
+void	*even_num(void *general);
+void	*odd_num(void *general);
 
 #endif

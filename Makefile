@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: glambrig <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/08 16:00:49 by glambrig          #+#    #+#              #
-#    Updated: 2023/12/15 14:50:50 by glambrig         ###   ########.fr        #
+#    Updated: 2023/12/17 17:09:11 by glambrig         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ CFLAGS = -Wall -Wextra -Werror -lpthread -g
 SRC = utils.c \
 	error_checks.c \
 	philo.c \
-	init.c
+	init.c \
+	actual_algo.c
 	
 OBJ = $(SRC:.c=.o)
 

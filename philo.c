@@ -3,32 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:03:48 by glambrig          #+#    #+#             */
-/*   Updated: 2023/12/17 11:57:07 by glambrig         ###   ########.fr       */
+/*   Updated: 2023/12/17 18:23:50 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-pthread_mutex_t mutex;//////////////AAAAAAAa
+// void	*test_func(void *general)
+// {
+// 	int i = 0;
+// 	while (i < 500)
+// 	{
+// 		pthread_mutex_lock(&((t_general *)general)->mutex);
+// 		printf("bonjour\n");
+// 		i++;
+// 		pthread_mutex_unlock(&((t_general *)general)->mutex);
+// 	}
+// 	return NULL;
+// }
 
-void	*func(void *n)
-{
-	int i = 0;
-	(void)n;
-	while (i < 5)
-	{
-		pthread_mutex_lock(&mutex);
-		printf("bonjour\n");
-		i++;
-		pthread_mutex_unlock(&mutex);
-	}
-	return NULL;
-}
-
-void	init_threads(pthread_t **threads, int nb_philos)
+void	init_threads(pthread_t **threads, int nb_philos, t_general *general)
 {
 	int	i;
 
@@ -38,8 +35,16 @@ void	init_threads(pthread_t **threads, int nb_philos)
 	i = 0;
 	while (i < nb_philos)
 	{
-		if (pthread_create(*threads + i, NULL, &func, NULL) != 0)
-			write_error("pthread_create failed\n");
+		if (nb_philos % 2 == 0)
+		{
+			if (pthread_create(*threads + i, NULL, &even_num, general) != 0)
+				write_error("pthread_create failed\n");
+		}
+		else if (nb_philos % 2 == 1)
+		{
+			if (pthread_create(*threads + i, NULL, &odd_num, general) != 0)
+				write_error("pthread_create failed\n");			
+		}
 		i++;
 	}
 }
@@ -59,8 +64,8 @@ void	join_threads(pthread_t **threads, int nb_philos)
 
 int	main(int ac, char **av)
 {
-	pthread_t	*philos;
 	t_general	*general;
+	pthread_t	*threads;
 	
 	/*Errors*/
 	if (ac < 5 || atoi(av[1]) <= 0 || atoi(av[2]) <= 0 || atoi(av[3]) <= 0
@@ -72,12 +77,15 @@ int	main(int ac, char **av)
 		atoi(av[4]), &general);
 	if (av[5] != NULL)
 		general->times_each_must_eat = atoi(av[5]);
-	pthread_mutex_init(&mutex, NULL);
-	init_threads(&philos, general->num_of_phis);
-	join_threads(&philos, general->num_of_phis);
+	pthread_mutex_init(&general->mutex, NULL);
+	init_threads(&threads, general->num_of_phis, general);
+	join_threads(&threads, general->num_of_phis);
+
+	/*Algorithm*/
 
 	/*Free*/
-	pthread_mutex_destroy(&mutex);
-	free(philos);
+	pthread_mutex_destroy(&general->mutex);
+	free(general->philo);
 	free(general);
+	free(threads);
 }
