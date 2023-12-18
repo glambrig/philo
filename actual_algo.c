@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   actual_algo.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/17 17:08:58 by glambrig          #+#    #+#             */
-/*   Updated: 2023/12/17 19:34:24 by glambrig         ###   ########.fr       */
+/*   Updated: 2023/12/18 14:03:04 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@
 // 	return NULL;
 // }
 
-void	*odd_num(void *general)
-{
 	//starting with philo 1 (p1), check if both forks are available
 		//if so, take them and eat
 		//otherwise, wait. (won't happen with p1 on first go, this cond is mainly for others p-s)
@@ -51,4 +49,11 @@ void	*odd_num(void *general)
 		 this means that the last one that couldn't previously eat (in the case of pN=5, this would be p5
 		 	because p1 and p3 take forks, but p5 can't bc p1 took his right fork) will eat after two ticks.
 		*/
+
+void	*odd_num(void *general)
+{
+	t_philo	philo;
+
+	philo = (t_general *)general->philo;
+	
 }
