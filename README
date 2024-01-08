@@ -1,13 +1,8 @@
-08/12
-Starting philosophers.
+TODO:
 
-Tasks that spend much of their time waiting for external events are
-generally good candidates for threading. 
+//////Write a func to calculate elapsed time.
+//////Use this func to write another func to display status messages.
+	[timestamp in ms] [p_nbr] has [done something]
 
-linked list?
-how to use threads?
-
-13/12
-TODO: Initalize threads and mutexes, start the threads.
-	Watch the tutorial about creating threads in a loop, that'll fix the 
-	present segfault. (It's codevault iirc)
+TODO:
+Create threads

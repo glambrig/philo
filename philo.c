@@ -3,89 +3,120 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/08 16:03:48 by glambrig          #+#    #+#             */
-/*   Updated: 2023/12/17 18:23:50 by glambrig         ###   ########.fr       */
+/*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
+/*   Updated: 2024/01/08 15:00:23 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// void	*test_func(void *general)
+// void	*tf(void *arg)
 // {
-// 	int i = 0;
-// 	while (i < 500)
+// 	t_philo *phi_arr = arg;
+// 	if (phi_arr->id == 1)
 // 	{
-// 		pthread_mutex_lock(&((t_general *)general)->mutex);
-// 		printf("bonjour\n");
-// 		i++;
-// 		pthread_mutex_unlock(&((t_general *)general)->mutex);
+// 		pthread_mutex_lock(phi_arr->rfork);
+// 		printf("locked by thread 1\n");
+// 		sleep(5);
+// 		pthread_mutex_unlock(phi_arr->rfork);
 // 	}
-// 	return NULL;
+// 	else if (phi_arr->id == 2)
+// 	{
+// 		pthread_mutex_lock(&(phi_arr->lfork));
+// 		printf("locked by thread 2\n");
+// 		sleep(5);
+// 		pthread_mutex_unlock(&(phi_arr->lfork));		
+// 	}
+// 	return (NULL);
 // }
 
-void	init_threads(pthread_t **threads, int nb_philos, t_general *general)
-{
-	int	i;
+// void	test(t_all *all)
+// {
+// 	pthread_create(&(all->phi_arr[0].thr_id), NULL, &tf, &(all->phi_arr[0]));
+// 	pthread_create(&(all->phi_arr[1].thr_id), NULL, &tf, &(all->phi_arr[1]));
+// 	pthread_join(all->phi_arr[0].thr_id, NULL);
+// 	pthread_join(all->phi_arr[1].thr_id, NULL);
+// }
 
-	*threads = ft_calloc(sizeof(pthread_t), (nb_philos + 1));
-	if (!(*threads))
-		write_error("Malloc failed\n");
-	i = 0;
-	while (i < nb_philos)
-	{
-		if (nb_philos % 2 == 0)
-		{
-			if (pthread_create(*threads + i, NULL, &even_num, general) != 0)
-				write_error("pthread_create failed\n");
-		}
-		else if (nb_philos % 2 == 1)
-		{
-			if (pthread_create(*threads + i, NULL, &odd_num, general) != 0)
-				write_error("pthread_create failed\n");			
-		}
-		i++;
-	}
-}
-
-void	join_threads(pthread_t **threads, int nb_philos)
+/*Frees allocated memory and destroys mutexes (forks)*/
+void	free_t_p(t_philo *p, int nb_p)
 {
 	int	i;
 
 	i = 0;
-	while (i < nb_philos)
+	while (i < nb_p)
 	{
-		if (pthread_join(*(*threads + i), NULL) != 0)
-			write_error("pthread_join failed\n");
+		pthread_mutex_destroy(&(p[i].lfork));
+		i++;
+	}
+	free(p);
+}
+
+void	set_fork_pointers(t_philo *phi_arr, int nb_phi)
+{
+	int	i;
+
+	i = 0;
+	while (i < nb_phi)
+	{
+		phi_arr[i].rfork = &phi_arr[i + 1].lfork;
+		i++;
+	}
+	phi_arr[nb_phi].rfork = &phi_arr[0].lfork;
+}
+
+void	init_forks(t_philo *phi_arr, int nb_phi)
+{
+	int	i;
+
+	i = 0;
+	while (i < nb_phi)
+	{
+		pthread_mutex_init(&(phi_arr[i].lfork), NULL);
 		i++;
 	}
 }
 
-int	main(int ac, char **av)
+/*Allocates the array of t_philo in t_all, gives all p's an id, sets the
+	fork pointers, and initializes the mutexes*/
+void	alloc_phi_arr(t_all *all, int nb_phi)
 {
-	t_general	*general;
-	pthread_t	*threads;
-	
-	/*Errors*/
-	if (ac < 5 || atoi(av[1]) <= 0 || atoi(av[2]) <= 0 || atoi(av[3]) <= 0
-		|| atoi(av[4]) <= 0)
-		write_error("Argument error\n");
+	int	i;
 
-	/*Init*/
-	init_t_general(atoi(av[1]), atoi(av[2]), atoi(av[3]),
-		atoi(av[4]), &general);
-	if (av[5] != NULL)
-		general->times_each_must_eat = atoi(av[5]);
-	pthread_mutex_init(&general->mutex, NULL);
-	init_threads(&threads, general->num_of_phis, general);
-	join_threads(&threads, general->num_of_phis);
+	i = 0;
+	all->phi_arr = ft_calloc(sizeof(t_philo), nb_phi + 1);
+	while (i < nb_phi)
+	{
+		all->phi_arr[i].id = i + 1;
+		all->phi_arr[i].all = all;
+		i++;
+	}
+	set_fork_pointers(all->phi_arr, nb_phi);
+	init_forks(all->phi_arr, nb_phi);
+}
 
-	/*Algorithm*/
+int		main(int ac, char **av)
+{
+	t_all	all;
 
-	/*Free*/
-	pthread_mutex_destroy(&general->mutex);
-	free(general->philo);
-	free(general);
-	free(threads);
+	if (ac != 5 && ac != 6)
+		write_error("Not enough arguments");
+	all.nb_p = ft_atoi(av[1]);
+	all.time_to_die = ft_atoi(av[2]);
+	all.time_to_eat = ft_atoi(av[3]);
+	all.time_to_sleep = ft_atoi(av[4]);
+	error_checks(&all);
+	if (av[5])
+		all.times_each_must_eat = ft_atoi(av[5]);
+	alloc_phi_arr(&all, all.nb_p);
+	create_threads(&all);
+	int i = 0;
+	while (i < all.nb_p)
+	{
+		pthread_join(all.phi_arr[i].thr_id, NULL);
+		i++;
+	}
+	free_t_p(all.phi_arr, all.nb_p);
 }

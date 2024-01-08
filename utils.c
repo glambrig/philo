@@ -3,23 +3,55 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:41:31 by glambrig          #+#    #+#             */
-/*   Updated: 2023/12/17 16:57:01 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/08 14:17:33 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	ft_bzero(void *loc, size_t n)
+void	ft_putchar(char c)
 {
-	unsigned int	i;
+	write(1, &c, 1);
+}
+
+void	p_status(t_timeval timestamp, int p_nbr, char *action)
+{
+	ft_putnbr(timestamp.tv_usec);
+	ft_putstr("ms ");
+	ft_putnbr(p_nbr);
+	//ft_putstr(" has ");
+	ft_putstr(action);
+	ft_putchar('\n');
+}
+
+void	ft_putnbr(long long n)
+{
+	if (n < 0)
+	{
+		write(1, "-", 1);
+		n *= -1;
+	}
+	if (n == 0)
+	{
+		write(1, "0", 1);
+		return ;
+	}
+	if (n > 9)
+		ft_putnbr(n / 10);
+	ft_putchar(n % 10 + '0');
+}
+
+void	ft_putstr(char *s)
+{
+	int	i;
 
 	i = 0;
-	while (i < n)
+	while (s[i])
 	{
-		*(char *)(loc + i) = '\0';
+		write(1, &s[i], 1);
 		i++;
 	}
 }
@@ -39,15 +71,15 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	dest = malloc(nmemb * size);
 	if (!dest)
 		return (NULL);
-	ft_bzero((unsigned char *)dest, res);
+	memset(dest, 0, size);
 	return (dest);
 }
 
-int	ft_atoi(char *s)
+long long	ft_atoi(char *s)
 {
-	int	res;
-	int	i;
-	int	sign;
+	long long	res;
+	int			i;
+	int			sign;
 
 	res = 0;
 	i = 0;

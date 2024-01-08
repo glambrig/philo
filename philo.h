@@ -3,59 +3,55 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/08 15:32:29 by glambrig          #+#    #+#             */
-/*   Updated: 2023/12/17 18:18:51 by glambrig         ###   ########.fr       */
+/*   Created: 2024/01/05 23:09:22 by glambrig          #+#    #+#             */
+/*   Updated: 2024/01/08 13:44:50 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
-
-# include <sys/time.h>
-# include <time.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <stdlib.h>
 # include <pthread.h>
-# include <errno.h>	//For global errno var, used to diagnose errors
+# include <stdio.h>
+# include <string.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <unistd.h>
 
-typedef	struct	s_philo
+typedef struct	timeval	t_timeval;
+struct	s_all;
+
+typedef struct	s_philo
 {
-	unsigned long long	id;
-	short		is_eating;	//bool
-	short		is_sleeping;	//bool
-	short		is_thinking;	//bool
-	short		died;	//bool
-	short		lfork;	//1 if available, 0 if not
-	short		rfork;	//1 if available, 0 if not
-	short		has_lfork;	//1 if holding fork, 0 if not
-	short		has_rfork;	//1 if holding fork, 0 if not
+	unsigned short	id;
+	pthread_t		thr_id;	//init'd by pthread_create, used by pthread_join
+	pthread_mutex_t	lfork;
+	pthread_mutex_t	*rfork;
+	short			dead;	//if p is dead, dead == 1 else 0
+	struct s_all	*all;
 }	t_philo;
 
-typedef struct	s_general
+typedef struct	s_all
 {
-	unsigned int		num_of_phis;
-	unsigned long long 	time_to_die;
-	unsigned long long	time_to_eat;
-	unsigned long long	time_to_sleep;
-	unsigned long long	times_each_must_eat;
-	t_philo				*philo;
-	pthread_mutex_t 	mutex;
-}	t_general;
+	int			nb_p;
+	long long	time_to_die;
+	long long	time_to_eat;
+	long long	time_to_sleep;
+	int			times_each_must_eat;
+	t_philo		*phi_arr;
+	t_timeval	start;
+}	t_all;
 
-/*Error and utility functions*/
-void	write_error(char *s);
-void	*ft_calloc(size_t nmemb, size_t size);
-int	ft_atoi(char *s);
-
-/*Init functions*/
-void	init_t_general(int nb_philos, int time_to_die,int time_to_eat,
-	int time_to_sleep, t_general **general);
-
-/*Algorithm*/
-void	*even_num(void *general);
-void	*odd_num(void *general);
+void		ft_putnbr(long long n);
+void		ft_putstr(char *s);
+void		*ft_calloc(size_t nmemb, size_t size);
+long long	ft_atoi(char *s);
+void		write_error(char *s);
+void		error_checks(t_all *all);
+void		free_t_p(t_philo *p, int nb_p);
+void		p_status(t_timeval timestamp, int p_nbr, char *action);
+t_timeval	calc_elapsed_time(t_timeval start);
+void		create_threads(t_all *all);
 
 #endif
