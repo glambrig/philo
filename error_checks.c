@@ -43,8 +43,13 @@ void	check_negatives(t_all *all)
 	if (all->nb_p <= 0 || all->time_to_die < 0 || all->time_to_eat < 0
 		|| all->time_to_sleep < 0)
 		write_error("Negative number as input");
-	if (all->times_each_must_eat && all->times_each_must_eat < 0)
+	if (all->times_each_must_eat == 0 && all->times_each_must_eat < 0)
+	{
+		printf("each must eat = %d\n", all->times_each_must_eat);///////
+		if (all->times_each_must_eat == 0)
+			exit(0);
 		write_error("Negative number as input (times_each_must_eat)");
+	}
 }
 
 void	error_checks(t_all *all)

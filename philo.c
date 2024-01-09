@@ -12,34 +12,6 @@
 
 #include "philo.h"
 
-// void	*tf(void *arg)
-// {
-// 	t_philo *phi_arr = arg;
-// 	if (phi_arr->id == 1)
-// 	{
-// 		pthread_mutex_lock(phi_arr->rfork);
-// 		printf("locked by thread 1\n");
-// 		sleep(5);
-// 		pthread_mutex_unlock(phi_arr->rfork);
-// 	}
-// 	else if (phi_arr->id == 2)
-// 	{
-// 		pthread_mutex_lock(&(phi_arr->lfork));
-// 		printf("locked by thread 2\n");
-// 		sleep(5);
-// 		pthread_mutex_unlock(&(phi_arr->lfork));		
-// 	}
-// 	return (NULL);
-// }
-
-// void	test(t_all *all)
-// {
-// 	pthread_create(&(all->phi_arr[0].thr_id), NULL, &tf, &(all->phi_arr[0]));
-// 	pthread_create(&(all->phi_arr[1].thr_id), NULL, &tf, &(all->phi_arr[1]));
-// 	pthread_join(all->phi_arr[0].thr_id, NULL);
-// 	pthread_join(all->phi_arr[1].thr_id, NULL);
-// }
-
 /*Frees allocated memory and destroys mutexes (forks)*/
 void	free_t_p(t_philo *p, int nb_p)
 {
@@ -107,16 +79,19 @@ int		main(int ac, char **av)
 	all.time_to_die = ft_atoi(av[2]);
 	all.time_to_eat = ft_atoi(av[3]);
 	all.time_to_sleep = ft_atoi(av[4]);
-	error_checks(&all);
+	all.times_each_must_eat = 0;
 	if (av[5])
 		all.times_each_must_eat = ft_atoi(av[5]);
+	error_checks(&all);
 	alloc_phi_arr(&all, all.nb_p);
 	create_threads(&all);
+	////
 	int i = 0;
 	while (i < all.nb_p)
 	{
 		pthread_join(all.phi_arr[i].thr_id, NULL);
 		i++;
 	}
+	////
 	free_t_p(all.phi_arr, all.nb_p);
 }

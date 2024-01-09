@@ -40,7 +40,7 @@ typedef struct	s_all
 	long long	time_to_sleep;
 	int			times_each_must_eat;
 	t_philo		*phi_arr;
-	t_timeval	start;
+	t_timeval	start;	//start value of timer
 }	t_all;
 
 void		ft_putnbr(long long n);
@@ -50,7 +50,7 @@ long long	ft_atoi(char *s);
 void		write_error(char *s);
 void		error_checks(t_all *all);
 void		free_t_p(t_philo *p, int nb_p);
-void		p_status(t_timeval timestamp, int p_nbr, char *action);
+void		p_status(int timestamp, int p_nbr, char *action);
 t_timeval	calc_elapsed_time(t_timeval start);
 void		create_threads(t_all *all);
 

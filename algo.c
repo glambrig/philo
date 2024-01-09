@@ -37,34 +37,25 @@ For even number:
 /*This func will be called by threads when nb_p % 2 == 0*/
 void	*even(void *phi)
 {
-	printf("in even\n");
-	t_philo *p;
+	t_philo 	*p;
 
 	p = (t_philo *)phi;
-	/*Wait for all threads to get here*/
-	static int	here;
-	if (!here)
-		here = 0;
-	here++;
-	while (here != p->all->nb_p)
-		usleep(5);
-	/*All threads are here*/
-	printf("hello!!\n");
+	usleep(5000);
 	if (p->id % 2 == 1)	//if it's an odd P
 	{
 		while (1)
 		{
 			pthread_mutex_lock(&p->lfork);
-			p_status(p->all->start, p->id, "has taken a fork");
+			p_status(123, p->id, "has taken a fork");//p->all->start instead of 123
 			pthread_mutex_lock(p->rfork);
-			p_status(p->all->start, p->id, "has taken a fork");
-			p_status(p->all->start, p->id, "is eating");
+			p_status(123, p->id, "has taken a fork");//p->all->start instead of 123
+			p_status(123, p->id, "is eating");//p->all->start instead of 123
 			usleep(p->all->time_to_eat);
 			pthread_mutex_unlock(&p->lfork);
 			pthread_mutex_unlock(p->rfork);
-			p_status(p->all->start, p->id, "is sleeping");
+			p_status(123, p->id, "is sleeping");//p->all->start instead of 123
 			usleep(p->all->time_to_sleep);
-			p_status(p->all->start, p->id, "is thinking");
+			p_status(123, p->id, "is thinking");//p->all->start instead of 123
 		}
 
 	}
@@ -74,16 +65,16 @@ void	*even(void *phi)
 		while (1)
 		{
 			pthread_mutex_lock(&p->lfork);
-			p_status(p->all->start, p->id, "has taken a fork");
+			p_status(123, p->id, "has taken a fork");//p->all->start
 			pthread_mutex_lock(p->rfork);
-			p_status(p->all->start, p->id, "has taken a fork");
-			p_status(p->all->start, p->id, "is eating");
+			p_status(123, p->id, "has taken a fork");//p->all->start
+			p_status(123, p->id, "is eating");//p->all->start
 			usleep(p->all->time_to_eat);
 			pthread_mutex_unlock(&p->lfork);
 			pthread_mutex_unlock(p->rfork);
-			p_status(p->all->start, p->id, "is sleeping");
+			p_status(123, p->id, "is sleeping");//p->all->start
 			usleep(p->all->time_to_sleep);
-			p_status(p->all->start, p->id, "is thinking");	
+			p_status(123, p->id, "is thinking");	//p->all->start
 		}
 	}
 	return (NULL);
@@ -91,13 +82,12 @@ void	*even(void *phi)
 
 void	create_threads(t_all *all)
 {
-	t_timeval	start;
 	t_philo		*p;
+	//t_timeval	start;
 	int			i;
 
 	p = all->phi_arr;
 	i = 0;
-	gettimeofday(&all->start, NULL);
 	//printf("nb_p = %d\n", all->nb_p);
 	while (i < all->nb_p)
 	{
@@ -111,7 +101,12 @@ void	create_threads(t_all *all)
 			//printf("in %% 2 == 1\n");
 			pthread_create(&(p[i].thr_id), NULL, &even, &all->phi_arr[i]);//CHANGE TO &ODD WHEN THAT FUNC IS WRITTEN
 		}
-		pthread_detach(p[i].thr_id);	//Lets to OS clean up thread resources if main process ends
+		i++;
+	}
+	i = 0;
+	while (i < all->nb_p)
+	{
+		pthread_join(p[i].thr_id, NULL);
 		i++;
 	}
 }

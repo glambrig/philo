@@ -17,14 +17,26 @@ void	ft_putchar(char c)
 	write(1, &c, 1);
 }
 
-void	p_status(t_timeval timestamp, int p_nbr, char *action)
+//was t_timeval timestamp
+void	p_status(int timestamp, int p_nbr, char *action)
 {
-	ft_putnbr(timestamp.tv_usec);
+	static pthread_mutex_t	moo;
+	static int				init;
+
+	if (!init)
+	{
+		pthread_mutex_init(&moo, NULL);
+		init = 1;
+	}
+	pthread_mutex_lock(&moo);
+	//ft_putnbr(timestamp.tv_usec);
+	ft_putnbr(timestamp);
 	ft_putstr("ms ");
 	ft_putnbr(p_nbr);
-	//ft_putstr(" has ");
+	ft_putchar(' ');
 	ft_putstr(action);
 	ft_putchar('\n');
+	pthread_mutex_unlock(&moo);
 }
 
 void	ft_putnbr(long long n)
