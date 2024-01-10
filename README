@@ -5,4 +5,9 @@ TODO:
 	[timestamp in ms] [p_nbr] has [done something]
 
 TODO:
-Create threads
+////Create threads
+
+10/1
+TODO:
+	write time correctly
+	change algo cond from while(1) to real cond (as long as nobody died, etc.)

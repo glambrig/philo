@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:15:03 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/08 12:15:06 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/10 16:40:23 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,6 @@ t_timeval	calc_elapsed_time(t_timeval start)
 
 	gettimeofday(&now, NULL);
 	res.tv_sec = now.tv_sec - start.tv_sec;
-	res.tv_usec = now.tv_usec - start.tv_usec;
+	res.tv_usec = (now.tv_usec - start.tv_usec) + (res.tv_sec * 1000);
 	return (res);
 }

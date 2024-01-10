@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/10 15:27:03 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/10 16:08:40 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,11 @@ void	set_fork_pointers(t_philo *phi_arr, int nb_phi)
 	int	i;
 
 	i = 0;
+	if (nb_phi == 1)
+	{
+		phi_arr[0].rfork = NULL;
+		return ;
+	}
 	while (i < nb_phi)
 	{
 		phi_arr[i].rfork = &phi_arr[i + 1].lfork;

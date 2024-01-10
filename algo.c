@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/10 15:24:34 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/10 16:40:52 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,15 @@ void	*even(void *phi)
 		{
 			pthread_mutex_lock(&p->lfork);
 			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
-			pthread_mutex_lock(p->rfork);
+			if (p->rfork != NULL)
+				pthread_mutex_lock(p->rfork);
+			else
+			{
+				usleep(p->all->time_to_die);
+				p_status(calc_elapsed_time(start), p->id, "died");
+				free_t_p(p, p->all->nb_p);
+				exit(0);
+			}
 			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
 			p_status(calc_elapsed_time(start), p->id, "is eating");
 			usleep(p->all->time_to_eat);
@@ -67,7 +75,15 @@ void	*even(void *phi)
 		{
 			pthread_mutex_lock(&p->lfork);
 			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
-			pthread_mutex_lock(p->rfork);
+			if (p->rfork != NULL)
+				pthread_mutex_lock(p->rfork);
+			else
+			{
+				usleep(p->all->time_to_die);
+				p_status(calc_elapsed_time(start), p->id, "died");
+				free_t_p(p, p->all->nb_p);
+				exit(0);
+			}
 			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
 			p_status(calc_elapsed_time(start), p->id, "is eating");
 			usleep(p->all->time_to_eat);
@@ -84,22 +100,18 @@ void	*even(void *phi)
 void	create_threads(t_all *all)
 {
 	t_philo		*p;
-	//t_timeval	start;
 	int			i;
 
 	p = all->phi_arr;
 	i = 0;
-	//printf("nb_p = %d\n", all->nb_p);
 	while (i < all->nb_p)
 	{
 		if (all->nb_p % 2 == 0)
 		{
-			//printf("in %% 2 == 0\n");
 			pthread_create(&(p[i].thr_id), NULL, &even, &all->phi_arr[i]);
 		}
 		else if (all->nb_p % 2 == 1)
 		{
-			//printf("in %% 2 == 1\n");
 			pthread_create(&(p[i].thr_id), NULL, &even, &all->phi_arr[i]);//CHANGE TO &ODD WHEN THAT FUNC IS WRITTEN
 		}
 		i++;
