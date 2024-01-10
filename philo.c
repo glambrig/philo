@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/08 15:00:23 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/10 15:27:03 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,12 +86,12 @@ int		main(int ac, char **av)
 	alloc_phi_arr(&all, all.nb_p);
 	create_threads(&all);
 	////
-	int i = 0;
-	while (i < all.nb_p)
-	{
-		pthread_join(all.phi_arr[i].thr_id, NULL);
-		i++;
-	}
-	////
-	free_t_p(all.phi_arr, all.nb_p);
+	// int i = 0;
+	// while (i < all.nb_p)
+	// {
+	// 	pthread_join(all.phi_arr[i].thr_id, NULL);
+	// 	i++;
+	// }
+	// ////
+	// free_t_p(all.phi_arr, all.nb_p);
 }

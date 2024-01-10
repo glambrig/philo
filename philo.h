@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:09:22 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/08 13:44:50 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/10 15:23:05 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ long long	ft_atoi(char *s);
 void		write_error(char *s);
 void		error_checks(t_all *all);
 void		free_t_p(t_philo *p, int nb_p);
-void		p_status(int timestamp, int p_nbr, char *action);
+void		p_status(t_timeval timestamp, int p_nbr, char *action);
 t_timeval	calc_elapsed_time(t_timeval start);
 void		create_threads(t_all *all);
 

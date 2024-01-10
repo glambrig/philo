@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   algo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/08 14:56:55 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/10 15:24:34 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,24 +38,25 @@ For even number:
 void	*even(void *phi)
 {
 	t_philo 	*p;
+	t_timeval	start;
 
 	p = (t_philo *)phi;
-	usleep(5000);
+	gettimeofday(&start, NULL);
 	if (p->id % 2 == 1)	//if it's an odd P
 	{
 		while (1)
 		{
 			pthread_mutex_lock(&p->lfork);
-			p_status(123, p->id, "has taken a fork");//p->all->start instead of 123
+			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
 			pthread_mutex_lock(p->rfork);
-			p_status(123, p->id, "has taken a fork");//p->all->start instead of 123
-			p_status(123, p->id, "is eating");//p->all->start instead of 123
+			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
+			p_status(calc_elapsed_time(start), p->id, "is eating");
 			usleep(p->all->time_to_eat);
 			pthread_mutex_unlock(&p->lfork);
 			pthread_mutex_unlock(p->rfork);
-			p_status(123, p->id, "is sleeping");//p->all->start instead of 123
+			p_status(calc_elapsed_time(start), p->id, "is sleeping");
 			usleep(p->all->time_to_sleep);
-			p_status(123, p->id, "is thinking");//p->all->start instead of 123
+			p_status(calc_elapsed_time(start), p->id, "is thinking");
 		}
 
 	}
@@ -65,16 +66,16 @@ void	*even(void *phi)
 		while (1)
 		{
 			pthread_mutex_lock(&p->lfork);
-			p_status(123, p->id, "has taken a fork");//p->all->start
+			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
 			pthread_mutex_lock(p->rfork);
-			p_status(123, p->id, "has taken a fork");//p->all->start
-			p_status(123, p->id, "is eating");//p->all->start
+			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
+			p_status(calc_elapsed_time(start), p->id, "is eating");
 			usleep(p->all->time_to_eat);
 			pthread_mutex_unlock(&p->lfork);
 			pthread_mutex_unlock(p->rfork);
-			p_status(123, p->id, "is sleeping");//p->all->start
+			p_status(calc_elapsed_time(start), p->id, "is sleeping");
 			usleep(p->all->time_to_sleep);
-			p_status(123, p->id, "is thinking");	//p->all->start
+			p_status(calc_elapsed_time(start), p->id, "is thinking");
 		}
 	}
 	return (NULL);
