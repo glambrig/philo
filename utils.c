@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:41:31 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/10 15:22:54 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/11 15:05:38 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	ft_putchar(char c)
 }
 
 //was t_timeval timestamp
-void	p_status(t_timeval timestamp, int p_nbr, char *action)
+void	p_status(long long timestamp, int p_nbr, char *action)
 {
 	static pthread_mutex_t	moo;
 	static int				init;
@@ -29,7 +29,7 @@ void	p_status(t_timeval timestamp, int p_nbr, char *action)
 		init = 1;
 	}
 	pthread_mutex_lock(&moo);
-	ft_putnbr(timestamp.tv_usec);
+	ft_putnbr(timestamp);
 	ft_putstr("ms ");
 	ft_putnbr(p_nbr);
 	ft_putchar(' ');

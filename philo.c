@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/10 16:08:40 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:22:38 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@ void	free_t_p(t_philo *p, int nb_p)
 	int	i;
 
 	i = 0;
+	pthread_mutex_destroy(&p->all->m_dead);
 	while (i < nb_p)
 	{
 		pthread_mutex_destroy(&(p[i].lfork));
 		i++;
 	}
-	free(p);
+	free(p->all->phi_arr);
 }
 
 void	set_fork_pointers(t_philo *phi_arr, int nb_phi)
@@ -49,6 +50,7 @@ void	init_forks(t_philo *phi_arr, int nb_phi)
 	int	i;
 
 	i = 0;
+	pthread_mutex_init(&phi_arr->all->m_dead, NULL);
 	while (i < nb_phi)
 	{
 		pthread_mutex_init(&(phi_arr[i].lfork), NULL);
@@ -87,6 +89,8 @@ int		main(int ac, char **av)
 	all.times_each_must_eat = 0;
 	if (av[5])
 		all.times_each_must_eat = ft_atoi(av[5]);
+	else
+		all.times_each_must_eat = 100000;
 	error_checks(&all);
 	alloc_phi_arr(&all, all.nb_p);
 	create_threads(&all);

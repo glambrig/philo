@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:09:22 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/10 15:23:05 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/15 12:44:38 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,22 +25,26 @@ struct	s_all;
 typedef struct	s_philo
 {
 	unsigned short	id;
+	long			last_ate;
 	pthread_t		thr_id;	//init'd by pthread_create, used by pthread_join
 	pthread_mutex_t	lfork;
 	pthread_mutex_t	*rfork;
-	short			dead;	//if p is dead, dead == 1 else 0
+	short			has_lfork;
+	short			has_rfork;
 	struct s_all	*all;
 }	t_philo;
 
 typedef struct	s_all
 {
-	int			nb_p;
-	long long	time_to_die;
-	long long	time_to_eat;
-	long long	time_to_sleep;
-	int			times_each_must_eat;
-	t_philo		*phi_arr;
-	t_timeval	start;	//start value of timer
+	int				nb_p;
+	long long		time_to_die;
+	long long		time_to_eat;
+	long long		time_to_sleep;
+	int				times_each_must_eat;
+	short			dead;	//if any p is dead, dead == 1 else 0
+	pthread_mutex_t	m_dead;
+	t_philo			*phi_arr;
+	t_timeval		start;	//start value of timer
 }	t_all;
 
 void		ft_putnbr(long long n);
@@ -50,8 +54,8 @@ long long	ft_atoi(char *s);
 void		write_error(char *s);
 void		error_checks(t_all *all);
 void		free_t_p(t_philo *p, int nb_p);
-void		p_status(t_timeval timestamp, int p_nbr, char *action);
-t_timeval	calc_elapsed_time(t_timeval start);
+void		p_status(long long timestamp, int p_nbr, char *action);
+long long	calc_elapsed_time(t_timeval start);
 void		create_threads(t_all *all);
 
 #endif
