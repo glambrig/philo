@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/15 13:22:38 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/15 22:41:42 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	free_t_p(t_philo *p, int nb_p)
 
 	i = 0;
 	pthread_mutex_destroy(&p->all->m_dead);
+	pthread_mutex_destroy(&p->all->m_forks);
 	while (i < nb_p)
 	{
 		pthread_mutex_destroy(&(p[i].lfork));
@@ -51,6 +52,7 @@ void	init_forks(t_philo *phi_arr, int nb_phi)
 
 	i = 0;
 	pthread_mutex_init(&phi_arr->all->m_dead, NULL);
+	pthread_mutex_init(&phi_arr->all->m_forks, NULL);
 	while (i < nb_phi)
 	{
 		pthread_mutex_init(&(phi_arr[i].lfork), NULL);

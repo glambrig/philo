@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/15 13:38:56 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/16 19:50:23 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,14 @@ For even number:
 1. Odd numbered p's eat
 2. Even numbered p's eat
 3. Back to step 1*/
+
+void	rfork_is_null(t_philo *p, t_timeval start)
+{
+	usleep(p->all->time_to_die * 1000);	//x1000 because usleep takes MICROseconds
+	p_status(calc_elapsed_time(start), p->id, "died");
+	free_t_p(p, p->all->nb_p);
+	exit(0);
+}
 
 /*Detaches all threads, and unlocks all mutexes*/
 void	detach_t_unlock_m_all(t_philo *p)
@@ -64,7 +72,7 @@ int	check_death(t_philo *p, t_timeval start)
 	return (0);
 }
 
-void	*odd(void *phi)
+void	odd(t_philo *phi)
 {
 	t_philo 	*p;
 	t_timeval	start;
@@ -75,20 +83,14 @@ void	*odd(void *phi)
 	i = 0;
 	while (p->all->dead != 1 && i++ < p->all->times_each_must_eat)
 	{
+		usleep(p->all->time_to_die * 10);	//Gives time for even p's to start eating
 		pthread_mutex_lock(&p->lfork);
-		p->has_lfork = 1;
 		check_death(p, start);
 		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork");
 		if (p->rfork != NULL)
 			pthread_mutex_lock(p->rfork);
 		else	//if there's only one P rfork == NULL
-		{
-			usleep(p->all->time_to_die * 1000);	//x1000 because usleep takes MICROseconds
-			p_status(calc_elapsed_time(start), p->id, "died");
-			free_t_p(p, p->all->nb_p);
-			exit(0);
-		}
-		p->has_rfork = 1;
+			rfork_is_null(p, start);
 		check_death(p, start);
 		p_status(calc_elapsed_time(start), p->id, "has taken a RIGHT fork");
 		p_status(calc_elapsed_time(start), p->id, "is eating");
@@ -98,8 +100,6 @@ void	*odd(void *phi)
 		p_status(calc_elapsed_time(start), p->id, "is sleeping");
 		pthread_mutex_unlock(&p->lfork);
 		pthread_mutex_unlock(p->rfork);
-		p->has_lfork = 0;
-		p->has_rfork = 0;
 		check_death(p, start);
 		usleep(p->all->time_to_sleep * 1000);
 		p_status(calc_elapsed_time(start), p->id, "is thinking");
@@ -107,11 +107,9 @@ void	*odd(void *phi)
 	detach_t_unlock_m_all(p);
 	free_t_p(p, p->all->nb_p);
 	exit(0);
-	return (NULL);
 }
 
-/*This func will be called by threads when nb_p % 2 == 0*/
-void	*even(void *phi)
+void	even(t_philo *phi)
 {
 	t_philo 	*p;
 	t_timeval	start;
@@ -120,24 +118,19 @@ void	*even(void *phi)
 	p = (t_philo *)phi;
 	gettimeofday(&start, NULL);
 	i = 0;
-	while (p->all->dead != 1 && i++ < p->all->times_each_must_eat)
+	while (p->all->dead != 1 && (i++ < p->all->times_each_must_eat
+		|| p->all->times_each_must_eat == (-1)))
 	{
-		pthread_mutex_lock(&p->lfork);
-		p->has_lfork = 1;
-		check_death(p, start);
-		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork");
 		if (p->rfork != NULL)
-			pthread_mutex_lock(p->rfork);
-		else	//if there's only one P rfork == NULL
 		{
-			usleep(p->all->time_to_die * 1000);	//x1000 because usleep takes MICROseconds
-			p_status(calc_elapsed_time(start), p->id, "died");
-			free_t_p(p, p->all->nb_p);
-			exit(0);
+			pthread_mutex_lock(p->rfork);
+			p_status(calc_elapsed_time(start), p->id, "has taken a RIGHT fork");
 		}
-		p->has_rfork = 1;
+		else	//if there's only one P rfork == NULL
+			rfork_is_null(p, start);
 		check_death(p, start);
-		p_status(calc_elapsed_time(start), p->id, "has taken a RIGHT fork");
+		pthread_mutex_lock(&p->lfork);
+		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork");
 		p_status(calc_elapsed_time(start), p->id, "is eating");
 		p->last_ate = calc_elapsed_time(start);
 		usleep(p->all->time_to_eat * 1000);
@@ -145,8 +138,6 @@ void	*even(void *phi)
 		p_status(calc_elapsed_time(start), p->id, "is sleeping");
 		pthread_mutex_unlock(&p->lfork);
 		pthread_mutex_unlock(p->rfork);
-		p->has_lfork = 0;
-		p->has_rfork = 0;
 		check_death(p, start);
 		usleep(p->all->time_to_sleep * 1000);
 		p_status(calc_elapsed_time(start), p->id, "is thinking");
@@ -154,28 +145,32 @@ void	*even(void *phi)
 	detach_t_unlock_m_all(p);
 	free_t_p(p, p->all->nb_p);
 	exit(0);
+}
+
+void	*thread_func(void *phi)
+{
+	t_philo *p;
+
+	p = (t_philo *)phi;
+	if (p->id % 2 == 0)
+		even(p);
+	else
+		odd(p);
 	return (NULL);
 }
 
 void	create_threads(t_all *all)
 {
-	t_philo		*p;
-	int			i;
+	t_philo	*p;
+	int		i;
 
 	p = all->phi_arr;
 	i = 0;
 	while (i < all->nb_p)
 	{
-		if (all->nb_p % 2 == 0)
-			pthread_create(&(p[i].thr_id), NULL, &even, &all->phi_arr[i]);
-		else if (all->nb_p % 2 == 1)
-		{
-			pthread_create(&(p[i].thr_id), NULL, &odd, &all->phi_arr[i]);
-			usleep(10000);
-		}
+ 		pthread_create(&(p[i].thr_id), NULL, &thread_func, &all->phi_arr[i]);
 		i++;
 	}
-	//usleep(10000);
 	i = 0;
 	while (i < all->nb_p)
 	{
@@ -183,3 +178,27 @@ void	create_threads(t_all *all)
 		i++;
 	}
 }
+
+// void	create_threads(t_all *all)
+// {
+// 	t_philo		*p;
+// 	int			i;
+
+// 	p = all->phi_arr;
+// 	i = 0;
+// 	while (i < all->nb_p)
+// 	{
+// 		if (all->nb_p % 2 == 0)
+// 			pthread_create(&(p[i].thr_id), NULL, &even, &all->phi_arr[i]);
+// 		else if (all->nb_p % 2 == 1)
+// 			pthread_create(&(p[i].thr_id), NULL, &odd, &all->phi_arr[i]);
+// 		i++;
+// 	}
+// 	//usleep(10000);
+// 	i = 0;
+// 	while (i < all->nb_p)
+// 	{
+// 		pthread_join(p[i].thr_id, NULL);
+// 		i++;
+// 	}
+// }

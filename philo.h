@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:09:22 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/15 12:44:38 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/16 19:43:16 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ typedef struct	s_philo
 	pthread_t		thr_id;	//init'd by pthread_create, used by pthread_join
 	pthread_mutex_t	lfork;
 	pthread_mutex_t	*rfork;
-	short			has_lfork;
-	short			has_rfork;
 	struct s_all	*all;
 }	t_philo;
 
@@ -43,6 +41,7 @@ typedef struct	s_all
 	int				times_each_must_eat;
 	short			dead;	//if any p is dead, dead == 1 else 0
 	pthread_mutex_t	m_dead;
+	pthread_mutex_t	m_forks;
 	t_philo			*phi_arr;
 	t_timeval		start;	//start value of timer
 }	t_all;
