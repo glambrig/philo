@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/15 22:41:42 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:33:36 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ void	free_t_p(t_philo *p, int nb_p)
 
 	i = 0;
 	pthread_mutex_destroy(&p->all->m_dead);
-	pthread_mutex_destroy(&p->all->m_forks);
 	while (i < nb_p)
 	{
-		pthread_mutex_destroy(&(p[i].lfork));
+		if (&(p[i].lfork) != NULL)
+			pthread_mutex_destroy(&(p[i].lfork));
 		i++;
 	}
 	free(p->all->phi_arr);
@@ -52,7 +52,6 @@ void	init_forks(t_philo *phi_arr, int nb_phi)
 
 	i = 0;
 	pthread_mutex_init(&phi_arr->all->m_dead, NULL);
-	pthread_mutex_init(&phi_arr->all->m_forks, NULL);
 	while (i < nb_phi)
 	{
 		pthread_mutex_init(&(phi_arr[i].lfork), NULL);
@@ -71,11 +70,13 @@ void	alloc_phi_arr(t_all *all, int nb_phi)
 	while (i < nb_phi)
 	{
 		all->phi_arr[i].id = i + 1;
+		all->phi_arr[i].last_ate = -1;
 		all->phi_arr[i].all = all;
 		i++;
 	}
 	set_fork_pointers(all->phi_arr, nb_phi);
 	init_forks(all->phi_arr, nb_phi);
+	all->dead = 0;
 }
 
 int		main(int ac, char **av)

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: glambrig <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/08 16:00:49 by glambrig          #+#    #+#              #
-#    Updated: 2024/01/08 14:50:08 by glambrig         ###   ########.fr        #
+#    Updated: 2024/01/17 13:30:25 by glambrig         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ CFLAGS = -Wall -Wextra -lpthread -g #-Werror
 
 SRC = philo.c \
 		utils.c \
+		2utils.c \
 		error_checks.c \
 		time.c \
 		algo.c \
