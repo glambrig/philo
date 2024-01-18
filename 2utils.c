@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   2utils.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:25:12 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/17 13:56:03 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/18 12:05:09 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	check_death(t_philo *p, t_timeval start)
 		p_status(calc_elapsed_time(start), p->id, "died");
 		detach_t_unlock_m_all(p);
 		free_t_p(p, p->all->nb_p);
-		exit(0);
+		//exit(0);
 		return (1);
 	}
 	pthread_mutex_unlock(&p->all->m_dead);

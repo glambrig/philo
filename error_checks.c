@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:01:47 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/07 17:12:49 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/18 11:36:54 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	write_error(char *s)
 {
 	ft_putstr("Error: ");
 	ft_putstr(s);
+	ft_putchar('\n');
 	exit(0);
 }
 
