@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/17 14:33:36 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:54:05 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,12 @@ void	init_forks(t_philo *phi_arr, int nb_phi)
 
 	i = 0;
 	pthread_mutex_init(&phi_arr->all->m_dead, NULL);
-	while (i < nb_phi)
+	while (i <= nb_phi)
 	{
 		pthread_mutex_init(&(phi_arr[i].lfork), NULL);
 		i++;
 	}
+	//pthread_mutex_init(phi_arr[i].rfork, NULL); test
 }
 
 /*Allocates the array of t_philo in t_all, gives all p's an id, sets the
@@ -94,16 +95,8 @@ int		main(int ac, char **av)
 		all.times_each_must_eat = ft_atoi(av[5]);
 	else
 		all.times_each_must_eat = 100000;
-	error_checks(&all);
+	if (error_checks(&all) == 1)
+		return (-1);
 	alloc_phi_arr(&all, all.nb_p);
 	create_threads(&all);
-	////
-	// int i = 0;
-	// while (i < all.nb_p)
-	// {
-	// 	pthread_join(all.phi_arr[i].thr_id, NULL);
-	// 	i++;
-	// }
-	// ////
-	// free_t_p(all.phi_arr, all.nb_p);
 }

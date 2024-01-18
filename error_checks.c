@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:01:47 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/18 11:36:54 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:16:54 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,16 @@ void	check_negatives(t_all *all)
 {
 	if (all->nb_p <= 0 || all->time_to_die < 0 || all->time_to_eat < 0
 		|| all->time_to_sleep < 0)
+	{
 		write_error("Negative number as input");
+		return (1);
+	}
 	if (all->times_each_must_eat == 0 && all->times_each_must_eat < 0)
 	{
+		//
 		printf("each must eat = %d\n", all->times_each_must_eat);///////
 		if (all->times_each_must_eat == 0)
-			exit(0);
+			return (1);
 		write_error("Negative number as input (times_each_must_eat)");
 	}
 }

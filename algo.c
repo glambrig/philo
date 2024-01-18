@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/18 12:05:07 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:46:45 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,7 @@ void	odd(t_philo *p)
 			return ;
 		same_routine(p, start);
 	}
-	//detach_t_unlock_m_all(p);
-	//free_t_p(p, p->all->nb_p);
 	return ;
-	//exit(0);
 }
 
 void	even(t_philo *p)
@@ -83,10 +80,7 @@ void	even(t_philo *p)
 		pthread_mutex_lock(&p->lfork);
 		same_routine(p, start);
 	}
-	//detach_t_unlock_m_all(p);
-	//free_t_p(p, p->all->nb_p);
 	return ;
-	//exit(0);
 }
 
 void	*thread_func(void *phi)
@@ -120,4 +114,5 @@ void	create_threads(t_all *all)
 		pthread_join(p[i].thr_id, NULL);
 		i++;
 	}
+	free_t_p(all->phi_arr, all->nb_p);//
 }

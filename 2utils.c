@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:25:12 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/18 12:05:09 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:19:45 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	rfork_is_null(t_philo *p, t_timeval start)
 	exit(0);
 }
 
-/*Detaches all threads, and unlocks all mutexes*/
+/*Detaches all threads, and unlocks all fork mutexes*/
 void	detach_t_unlock_m_all(t_philo *p)
 {
 	int	i;
@@ -63,7 +63,7 @@ int	check_death(t_philo *p, t_timeval start)
 		p->all->dead = 1;
 		p_status(calc_elapsed_time(start), p->id, "died");
 		detach_t_unlock_m_all(p);
-		free_t_p(p, p->all->nb_p);
+		//free_t_p(p, p->all->nb_p);
 		//exit(0);
 		return (1);
 	}
