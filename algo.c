@@ -6,27 +6,40 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/18 13:46:45 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/19 16:32:47 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	same_routine(t_philo *p, t_timeval start)
+int	same_routine(t_philo *p, t_timeval start)
 {
-	p_status(calc_elapsed_time(start), p->id, "has taken a fork");
-	p_status(calc_elapsed_time(start), p->id, "is eating");
+	// if (check_death(p, start, 3) == 1)
+	// 	return (1);
+	//pthread_mutex_lock(&p->all->m_all);//
+	p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
+	p_status(calc_elapsed_time(start), p->id, "is eating", p);
+	//pthread_mutex_unlock(&p->all->m_all);////
+	//pthread_mutex_lock(&p->all->m_all);//
 	p->last_ate = calc_elapsed_time(start);
+	//pthread_mutex_unlock(&p->all->m_all);////
+	//pthread_mutex_lock(&p->all->m_all);//
 	usleep(p->all->time_to_eat * 1000);
+	//pthread_mutex_unlock(&p->all->m_all);////
 	if (check_death(p, start) == 1)
-		return ;
-	p_status(calc_elapsed_time(start), p->id, "is sleeping");
+		return (pthread_mutex_unlock(&p->lfork), pthread_mutex_unlock(p->rfork), 1);
+	//pthread_mutex_lock(&p->all->m_all);//
+	p_status(calc_elapsed_time(start), p->id, "is sleeping", p);
+	//pthread_mutex_unlock(&p->all->m_all);////
 	pthread_mutex_unlock(&p->lfork);
 	pthread_mutex_unlock(p->rfork);
 	if (check_death(p, start) == 1)
-		return ;
+		return (1);
+	//pthread_mutex_lock(&p->all->m_all);//
 	usleep(p->all->time_to_sleep * 1000);
-	p_status(calc_elapsed_time(start), p->id, "is thinking");
+	//pthread_mutex_unlock(&p->all->m_all);////
+	p_status(calc_elapsed_time(start), p->id, "is thinking", p);
+	return (0);
 }
 
 /*
@@ -42,18 +55,34 @@ void	odd(t_philo *p)
 	i = 0;
 	while (p->all->dead != 1 && i++ < p->all->times_each_must_eat)
 	{
+		//pthread_mutex_lock(&p->all->m_all);//
 		usleep(p->all->time_to_die * 10);
+		//pthread_mutex_unlock(&p->all->m_all);////
 		pthread_mutex_lock(&p->lfork);
 		if (check_death(p, start) == 1)
+		{
+			pthread_mutex_unlock(&p->lfork);
 			return ;
-		p_status(calc_elapsed_time(start), p->id, "has taken a fork");
+		}
+		//pthread_mutex_lock(&p->all->m_all);//
+		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
+		//pthread_mutex_unlock(&p->all->m_all);////
 		if (p->rfork != NULL)
 			pthread_mutex_lock(p->rfork);
-		else
-			rfork_is_null(p, start);
-		if (check_death(p, start) == 1)
+		else if (rfork_is_null(p, start))
 			return ;
-		same_routine(p, start);
+		if (check_death(p, start) == 1)
+		{
+			pthread_mutex_unlock(p->rfork);
+			return ;
+		}
+		if (same_routine(p, start) == 1)
+			return ;
+		if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
+		{
+			p->all->sim_done = 1;
+			return ;
+		}
 	}
 	return ;
 }
@@ -71,14 +100,23 @@ void	even(t_philo *p)
 		if (p->rfork != NULL)
 		{
 			pthread_mutex_lock(p->rfork);
-			p_status(calc_elapsed_time(start), p->id, "has taken a fork");
+			p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 		}
-		else
-			rfork_is_null(p, start);
-		if (check_death(p, start) == 1)
+		else if (rfork_is_null(p, start))
 			return ;
+		if (check_death(p, start) == 1)
+		{
+			pthread_mutex_unlock(p->rfork);
+			return ;
+		}
 		pthread_mutex_lock(&p->lfork);
-		same_routine(p, start);
+		if (same_routine(p, start) == 1)
+			return ;
+		if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
+		{
+			p->all->sim_done = 1;
+			return ;
+		}
 	}
 	return ;
 }
@@ -95,7 +133,7 @@ void	*thread_func(void *phi)
 	return (NULL);
 }
 
-void	create_threads(t_all *all)
+int	create_threads(t_all *all)
 {
 	t_philo	*p;
 	int		i;
@@ -104,15 +142,22 @@ void	create_threads(t_all *all)
 	i = 0;
 	while (i < all->nb_p)
 	{
-		pthread_create(&(p[i].thr_id), NULL, &thread_func, &all->phi_arr[i]);
+		if (pthread_create(&(p[i].thr_id), NULL, &thread_func, &all->phi_arr[i]) != 0)
+			return (write_error("pthread_create failed"));
 		i++;
 	}
 	usleep(all->time_to_die * 1000);
 	i = 0;
-	while (i < all->nb_p && all->dead != 1)
-	{
-		pthread_join(p[i].thr_id, NULL);
-		i++;
-	}
-	free_t_p(all->phi_arr, all->nb_p);//
+	 while (i < all->nb_p && all->dead != 1)
+	 {
+	 	if (pthread_join(p[i].thr_id, NULL) != 0)
+			return (write_error("pthread_join failed"));
+	 	i++;
+	 }
+	if (all->dead == 1)
+		return (1);
+	while (all->dead == 0 && all->sim_done == 0)
+		usleep(1000);
+	//free_t_p(all->phi_arr, all->nb_p);//
+	return (0);
 }

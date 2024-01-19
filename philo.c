@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/18 13:54:05 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/19 14:33:58 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	free_t_p(t_philo *p, int nb_p)
 
 	i = 0;
 	pthread_mutex_destroy(&p->all->m_dead);
+	pthread_mutex_destroy(&p->all->m_all);
+	pthread_mutex_destroy(&p->all->m_status);
 	while (i < nb_p)
 	{
 		if (&(p[i].lfork) != NULL)
@@ -52,6 +54,8 @@ void	init_forks(t_philo *phi_arr, int nb_phi)
 
 	i = 0;
 	pthread_mutex_init(&phi_arr->all->m_dead, NULL);
+	pthread_mutex_init(&phi_arr->all->m_all, NULL);
+	pthread_mutex_init(&phi_arr->all->m_status, NULL);
 	while (i <= nb_phi)
 	{
 		pthread_mutex_init(&(phi_arr[i].lfork), NULL);
@@ -98,5 +102,10 @@ int		main(int ac, char **av)
 	if (error_checks(&all) == 1)
 		return (-1);
 	alloc_phi_arr(&all, all.nb_p);
-	create_threads(&all);
+	if (create_threads(&all) == 1)
+	{
+		free_t_p(all.phi_arr, all.nb_p);
+		detach_t_unlock_m_all(all.phi_arr);
+	}
+	return (0);
 }
