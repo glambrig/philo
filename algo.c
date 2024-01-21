@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   algo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/19 16:32:47 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 14:23:14 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,17 +147,17 @@ int	create_threads(t_all *all)
 		i++;
 	}
 	usleep(all->time_to_die * 1000);
+	while (all->dead == 0 && all->sim_done == 0)
+		usleep(1000);
 	i = 0;
-	 while (i < all->nb_p && all->dead != 1)
-	 {
-	 	if (pthread_join(p[i].thr_id, NULL) != 0)
+	while (i < all->nb_p)// && all->dead != 1
+	{
+		if (pthread_join(p[i].thr_id, NULL) != 0)
 			return (write_error("pthread_join failed"));
-	 	i++;
+		i++;
 	 }
 	if (all->dead == 1)
 		return (1);
-	while (all->dead == 0 && all->sim_done == 0)
-		usleep(1000);
 	//free_t_p(all->phi_arr, all->nb_p);//
 	return (0);
 }

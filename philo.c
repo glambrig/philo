@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/19 14:33:58 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 14:30:27 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ int		main(int ac, char **av)
 	all.time_to_eat = ft_atoi(av[3]);
 	all.time_to_sleep = ft_atoi(av[4]);
 	all.times_each_must_eat = 0;
+	all.sim_done = 0;
 	if (av[5])
 		all.times_each_must_eat = ft_atoi(av[5]);
 	else
@@ -104,8 +105,11 @@ int		main(int ac, char **av)
 	alloc_phi_arr(&all, all.nb_p);
 	if (create_threads(&all) == 1)
 	{
-		free_t_p(all.phi_arr, all.nb_p);
 		detach_t_unlock_m_all(all.phi_arr);
+		free_t_p(all.phi_arr, all.nb_p);
+		return (1);
 	}
+	detach_t_unlock_m_all(all.phi_arr);
+	free_t_p(all.phi_arr, all.nb_p);
 	return (0);
 }
