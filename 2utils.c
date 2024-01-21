@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:25:12 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 16:44:09 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 16:53:19 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,15 @@ void	detach_t_unlock_m_all(t_philo *p)
 	if (p->has_lfork == 1)
 	{
 		pthread_mutex_unlock(&p->lfork);
-		printf("UNLOCKED %d's LEFT FORK\n", p->id);
+		//printf("UNLOCKED %d's LEFT FORK\n", p->id);
 	}
 	if (p->id != p->all->nb_p)
 	{
-		printf("THREAD %d is in rfork cond\n", p->id);
+		//printf("THREAD %d is in rfork cond\n", p->id);
 		if (p->has_rfork == 1)// && p->all->phi_arr[p->id + 1].has_lfork == 0
 		{
 			pthread_mutex_unlock(p->rfork);
-			printf("UNLOCKED %d's RIGHT FORK\n", p->id);
+			//printf("UNLOCKED %d's RIGHT FORK\n", p->id);
 		}
 	}
 	else if (p->id == p->all->nb_p)
@@ -57,7 +57,7 @@ void	detach_t_unlock_m_all(t_philo *p)
 		if (p->has_rfork == 1 && p->all->phi_arr[0].has_lfork == 0)
 		{
 			pthread_mutex_unlock(p->rfork);		
-			printf("UNLOCKED %d's RIGHT FORK\n", p->id);
+			//printf("UNLOCKED %d's RIGHT FORK\n", p->id);
 		}
 	}
 	pthread_mutex_unlock(&p->all->m_unlock);
@@ -75,6 +75,7 @@ int	check_death(t_philo *p, t_timeval start)
 		p->all->sim_done = 1;
 		detach_t_unlock_m_all(p);
 		pthread_mutex_unlock(&p->all->m_dead);
+		pthread_mutex_unlock(&p->all->m_all);
 		return (1);
 	}
 	pthread_mutex_unlock(&p->all->m_dead);

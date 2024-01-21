@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 16:26:57 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 16:58:02 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 
 int	same_routine(t_philo *p, t_timeval start)
 {
+	pthread_mutex_lock(&p->all->m_all);
 	if (check_death(p, start) == 1)
 	 	return (1);
+	pthread_mutex_unlock(&p->all->m_all);
 	//pthread_mutex_lock(&p->all->m_all);//
 	if (p->id % 2 == 0)
 		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork", p);
@@ -29,8 +31,10 @@ int	same_routine(t_philo *p, t_timeval start)
 	//pthread_mutex_lock(&p->all->m_all);//
 	usleep(p->all->time_to_eat * 1000);
 	//pthread_mutex_unlock(&p->all->m_all);////
+	pthread_mutex_lock(&p->all->m_all);
 	if (check_death(p, start) == 1)
 		return (1);
+	pthread_mutex_unlock(&p->all->m_all);
 		//return (pthread_mutex_unlock(&p->lfork), pthread_mutex_unlock(p->rfork), 1);
 	//pthread_mutex_lock(&p->all->m_all);//
 	p_status(calc_elapsed_time(start), p->id, "is sleeping", p);
@@ -61,19 +65,15 @@ void	odd(t_philo *p)
 	i = 0;
 	while (p->all->dead != 1 && i++ < p->all->times_each_must_eat)
 	{
-		//pthread_mutex_lock(&p->all->m_all);//
 		usleep(p->all->time_to_die * 10);
-		//pthread_mutex_unlock(&p->all->m_all);////
 		pthread_mutex_lock(&p->lfork);
 		pthread_mutex_lock(&p->all->m_all);//
 		p->has_lfork = 1;
 		pthread_mutex_unlock(&p->all->m_all);////
+		pthread_mutex_lock(&p->all->m_all);
 		if (check_death(p, start) == 1)
-		{
-			// pthread_mutex_unlock(&p->lfork);
-			// p->has_lfork = 0;
 			return ;
-		}
+		pthread_mutex_unlock(&p->all->m_all);
 		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork", p);
 		if (p->rfork != NULL)
 		{
@@ -84,12 +84,10 @@ void	odd(t_philo *p)
 		}
 		else if (rfork_is_null(p, start))
 			return ;
+		pthread_mutex_lock(&p->all->m_all);
 		if (check_death(p, start) == 1)
-		{
-			// p->has_rfork = 0;
-			// pthread_mutex_unlock(p->rfork);
 			return ;
-		}
+		pthread_mutex_unlock(&p->all->m_all);
 		if (same_routine(p, start) == 1)
 			return ;
 		if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
