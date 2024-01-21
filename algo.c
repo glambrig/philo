@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 16:58:02 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:37:36 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ int	same_routine(t_philo *p, t_timeval start)
 	pthread_mutex_unlock(&p->all->m_all);
 	//pthread_mutex_lock(&p->all->m_all);//
 	if (p->id % 2 == 0)
-		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork", p);
+		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 	else if (p->id % 2 == 1)
-		p_status(calc_elapsed_time(start), p->id, "has taken a RIGHT fork", p);
+		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 	p_status(calc_elapsed_time(start), p->id, "is eating", p);
 	//pthread_mutex_unlock(&p->all->m_all);////
 	//pthread_mutex_lock(&p->all->m_all);//
@@ -74,7 +74,7 @@ void	odd(t_philo *p)
 		if (check_death(p, start) == 1)
 			return ;
 		pthread_mutex_unlock(&p->all->m_all);
-		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork", p);
+		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 		if (p->rfork != NULL)
 		{
 			pthread_mutex_lock(p->rfork);
@@ -113,7 +113,7 @@ void	even(t_philo *p)
 		{
 			pthread_mutex_lock(p->rfork);
 			p->has_rfork = 1;
-			p_status(calc_elapsed_time(start), p->id, "has taken a RIGHT fork", p);
+			p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 		}
 		else if (rfork_is_null(p, start))
 			return ;
