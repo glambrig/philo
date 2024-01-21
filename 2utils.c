@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:25:12 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 16:53:19 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:48:34 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,12 @@ int	rfork_is_null(t_philo *p, t_timeval start)
 {
 	usleep(p->all->time_to_die * 1000);
 	p_status(calc_elapsed_time(start), p->id, "died", p);
-	pthread_mutex_unlock(p->rfork);
-	free_t_p(p, p->all->nb_p);
+	if (p->has_lfork == 1)
+		pthread_mutex_unlock(&p->lfork);
+	else if (p->has_rfork == 1)
+		pthread_mutex_unlock(p->rfork);
+	p->all->dead = 1;
+	p->all->sim_done = 1;
 	return (1);
 }
 
