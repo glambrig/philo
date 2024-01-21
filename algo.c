@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 14:23:14 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 16:26:57 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,13 @@
 
 int	same_routine(t_philo *p, t_timeval start)
 {
-	// if (check_death(p, start, 3) == 1)
-	// 	return (1);
+	if (check_death(p, start) == 1)
+	 	return (1);
 	//pthread_mutex_lock(&p->all->m_all);//
-	p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
+	if (p->id % 2 == 0)
+		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork", p);
+	else if (p->id % 2 == 1)
+		p_status(calc_elapsed_time(start), p->id, "has taken a RIGHT fork", p);
 	p_status(calc_elapsed_time(start), p->id, "is eating", p);
 	//pthread_mutex_unlock(&p->all->m_all);////
 	//pthread_mutex_lock(&p->all->m_all);//
@@ -27,10 +30,13 @@ int	same_routine(t_philo *p, t_timeval start)
 	usleep(p->all->time_to_eat * 1000);
 	//pthread_mutex_unlock(&p->all->m_all);////
 	if (check_death(p, start) == 1)
-		return (pthread_mutex_unlock(&p->lfork), pthread_mutex_unlock(p->rfork), 1);
+		return (1);
+		//return (pthread_mutex_unlock(&p->lfork), pthread_mutex_unlock(p->rfork), 1);
 	//pthread_mutex_lock(&p->all->m_all);//
 	p_status(calc_elapsed_time(start), p->id, "is sleeping", p);
 	//pthread_mutex_unlock(&p->all->m_all);////
+	p->has_lfork = 0;
+	p->has_rfork = 0;
 	pthread_mutex_unlock(&p->lfork);
 	pthread_mutex_unlock(p->rfork);
 	if (check_death(p, start) == 1)
@@ -59,21 +65,29 @@ void	odd(t_philo *p)
 		usleep(p->all->time_to_die * 10);
 		//pthread_mutex_unlock(&p->all->m_all);////
 		pthread_mutex_lock(&p->lfork);
+		pthread_mutex_lock(&p->all->m_all);//
+		p->has_lfork = 1;
+		pthread_mutex_unlock(&p->all->m_all);////
 		if (check_death(p, start) == 1)
 		{
-			pthread_mutex_unlock(&p->lfork);
+			// pthread_mutex_unlock(&p->lfork);
+			// p->has_lfork = 0;
 			return ;
 		}
-		//pthread_mutex_lock(&p->all->m_all);//
-		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
-		//pthread_mutex_unlock(&p->all->m_all);////
+		p_status(calc_elapsed_time(start), p->id, "has taken a LEFT fork", p);
 		if (p->rfork != NULL)
+		{
 			pthread_mutex_lock(p->rfork);
+			pthread_mutex_lock(&p->all->m_all);//
+			p->has_rfork = 1;
+			pthread_mutex_unlock(&p->all->m_all);//
+		}
 		else if (rfork_is_null(p, start))
 			return ;
 		if (check_death(p, start) == 1)
 		{
-			pthread_mutex_unlock(p->rfork);
+			// p->has_rfork = 0;
+			// pthread_mutex_unlock(p->rfork);
 			return ;
 		}
 		if (same_routine(p, start) == 1)
@@ -100,16 +114,19 @@ void	even(t_philo *p)
 		if (p->rfork != NULL)
 		{
 			pthread_mutex_lock(p->rfork);
-			p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
+			p->has_rfork = 1;
+			p_status(calc_elapsed_time(start), p->id, "has taken a RIGHT fork", p);
 		}
 		else if (rfork_is_null(p, start))
 			return ;
 		if (check_death(p, start) == 1)
 		{
+			p->has_rfork = 0;
 			pthread_mutex_unlock(p->rfork);
 			return ;
 		}
 		pthread_mutex_lock(&p->lfork);
+		p->has_lfork = 1;
 		if (same_routine(p, start) == 1)
 			return ;
 		if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
@@ -150,14 +167,13 @@ int	create_threads(t_all *all)
 	while (all->dead == 0 && all->sim_done == 0)
 		usleep(1000);
 	i = 0;
-	while (i < all->nb_p)// && all->dead != 1
+	while (i < all->nb_p)
 	{
 		if (pthread_join(p[i].thr_id, NULL) != 0)
 			return (write_error("pthread_join failed"));
 		i++;
-	 }
+	}
 	if (all->dead == 1)
 		return (1);
-	//free_t_p(all->phi_arr, all->nb_p);//
 	return (0);
 }

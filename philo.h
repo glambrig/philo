@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:09:22 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/19 16:29:04 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 16:30:39 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ typedef struct	s_philo
 	pthread_t		thr_id;	//init'd by pthread_create, used by pthread_join
 	pthread_mutex_t	lfork;
 	pthread_mutex_t	*rfork;
+	short			has_lfork;
+	short			has_rfork;
 	struct s_all	*all;
 }	t_philo;
 
@@ -44,6 +46,7 @@ typedef struct	s_all
 	pthread_mutex_t	m_dead;
 	pthread_mutex_t	m_status;
 	pthread_mutex_t	m_all;
+	pthread_mutex_t	m_unlock;
 	t_philo			*phi_arr;
 	t_timeval		start;	//start value of timer
 }	t_all;

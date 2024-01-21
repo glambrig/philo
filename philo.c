@@ -6,7 +6,7 @@
 /*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 14:30:27 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/21 16:24:03 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	free_t_p(t_philo *p, int nb_p)
 	pthread_mutex_destroy(&p->all->m_status);
 	while (i < nb_p)
 	{
-		if (&(p[i].lfork) != NULL)
-			pthread_mutex_destroy(&(p[i].lfork));
+		// if (&(p[i].lfork) != NULL)
+		pthread_mutex_destroy(&(p[i].lfork));
 		i++;
 	}
 	free(p->all->phi_arr);
@@ -38,11 +38,15 @@ void	set_fork_pointers(t_philo *phi_arr, int nb_phi)
 	if (nb_phi == 1)
 	{
 		phi_arr[0].rfork = NULL;
+		phi_arr[0].has_lfork = 0;
+		phi_arr[0].has_rfork = 0;
 		return ;
 	}
 	while (i < nb_phi)
 	{
 		phi_arr[i].rfork = &phi_arr[i + 1].lfork;
+		phi_arr[i].has_lfork = 0;
+		phi_arr[i].has_rfork = 0;
 		i++;
 	}
 	phi_arr[nb_phi].rfork = &phi_arr[0].lfork;
@@ -56,9 +60,13 @@ void	init_forks(t_philo *phi_arr, int nb_phi)
 	pthread_mutex_init(&phi_arr->all->m_dead, NULL);
 	pthread_mutex_init(&phi_arr->all->m_all, NULL);
 	pthread_mutex_init(&phi_arr->all->m_status, NULL);
-	while (i <= nb_phi)
+	while (i < nb_phi)
 	{
-		pthread_mutex_init(&(phi_arr[i].lfork), NULL);
+		if (pthread_mutex_init(&(phi_arr[i].lfork), NULL) != 0)
+		{
+			write_error("pthread_mutex_init failed");
+			return ;
+		}
 		i++;
 	}
 	//pthread_mutex_init(phi_arr[i].rfork, NULL); test
@@ -105,11 +113,9 @@ int		main(int ac, char **av)
 	alloc_phi_arr(&all, all.nb_p);
 	if (create_threads(&all) == 1)
 	{
-		detach_t_unlock_m_all(all.phi_arr);
 		free_t_p(all.phi_arr, all.nb_p);
 		return (1);
 	}
-	detach_t_unlock_m_all(all.phi_arr);
 	free_t_p(all.phi_arr, all.nb_p);
 	return (0);
 }
