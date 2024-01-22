@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:36:30 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 17:39:19 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:22:57 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	free_t_p(t_philo *p, int nb_p)
 	pthread_mutex_destroy(&p->all->m_unlock);
 	while (i <= nb_p)
 	{
-		// if (&(p[i].lfork) != NULL)
 		pthread_mutex_destroy(&(p[i].lfork));
 		i++;
 	}
@@ -71,7 +70,6 @@ void	init_forks(t_philo *phi_arr, int nb_phi)
 		}
 		i++;
 	}
-	//pthread_mutex_init(phi_arr[i].rfork, NULL); test
 }
 
 /*Allocates the array of t_philo in t_all, gives all p's an id, sets the
@@ -94,7 +92,7 @@ void	alloc_phi_arr(t_all *all, int nb_phi)
 	all->dead = 0;
 }
 
-int		main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_all	all;
 
@@ -104,12 +102,12 @@ int		main(int ac, char **av)
 	all.time_to_die = ft_atoi(av[2]);
 	all.time_to_eat = ft_atoi(av[3]);
 	all.time_to_sleep = ft_atoi(av[4]);
-	all.times_each_must_eat = 0;
+	all.x_each_must_eat = 0;
 	all.sim_done = 0;
 	if (av[5])
-		all.times_each_must_eat = ft_atoi(av[5]);
+		all.x_each_must_eat = ft_atoi(av[5]);
 	else
-		all.times_each_must_eat = 100000;
+		all.x_each_must_eat = 100000;
 	if (error_checks(&all) == 1)
 		return (-1);
 	alloc_phi_arr(&all, all.nb_p);

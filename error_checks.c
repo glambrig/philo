@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:01:47 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/19 14:33:25 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:23:09 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@ int	check_negatives(t_all *all)
 		write_error("Negative number as input");
 		return (1);
 	}
-	if (all->times_each_must_eat == 0 && all->times_each_must_eat < 0)
+	if (all->x_each_must_eat == 0 && all->x_each_must_eat < 0)
 	{
-		if (all->times_each_must_eat == 0)
+		if (all->x_each_must_eat == 0)
 			return (1);
-		write_error("Negative number as input (times_each_must_eat)");
-			return (1);
+		write_error("Negative number as input (x_each_must_eat)");
+		return (1);
 	}
 	return (0);
 }

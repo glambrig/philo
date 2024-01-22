@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:25:12 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/22 15:45:24 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:22:15 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	detach_t_unlock_m_all(t_philo *p)
 	{
 		if (p->has_rfork == 1 && p->all->phi_arr[0].has_lfork == 0)
 		{
-			pthread_mutex_unlock(p->rfork);	
+			pthread_mutex_unlock(p->rfork);
 			p->has_rfork = 0;
 		}
 	}
@@ -69,8 +69,10 @@ void	detach_t_unlock_m_all(t_philo *p)
 int	check_death(t_philo *p, t_timeval start)
 {
 	pthread_mutex_lock(&p->all->m_dead);
-	if (p->all->dead == 1 || (calc_elapsed_time(start) - p->last_ate >= p->all->time_to_die)
-		|| (p->last_ate == -1 && calc_elapsed_time(start) >= p->all->time_to_die))
+	if (p->all->dead == 1 || (calc_elapsed_time(start) - p->last_ate
+			>= p->all->time_to_die)
+		|| (p->last_ate == -1 && calc_elapsed_time(start)
+			>= p->all->time_to_die))
 	{
 		if (p->all->dead == 0)
 			p_status(calc_elapsed_time(start), p->id, "died", p);

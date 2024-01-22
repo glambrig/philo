@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:09:22 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/22 15:52:11 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:18:01 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-typedef struct	timeval	t_timeval;
-struct	s_all;
+typedef struct timeval	t_timeval;
+typedef struct s_all	t_all;
 
-typedef struct	s_philo
+typedef struct s_philo
 {
 	unsigned short	id;
 	long			last_ate;
@@ -34,22 +34,22 @@ typedef struct	s_philo
 	struct s_all	*all;
 }	t_philo;
 
-typedef struct	s_all
+struct	s_all
 {
 	int				nb_p;
 	long long		time_to_die;
 	long long		time_to_eat;
 	long long		time_to_sleep;
-	int				times_each_must_eat;
-	short			sim_done;	//if all p's have eaten at least times_each_must_eat, sim_done == 1 else 0
-	short			dead;	//if any p is dead, dead == 1 else 0
+	int				x_each_must_eat;
+	short			sim_done;
+	short			dead;
 	pthread_mutex_t	m_dead;
 	pthread_mutex_t	m_status;
 	pthread_mutex_t	m_all;
 	pthread_mutex_t	m_unlock;
 	t_philo			*phi_arr;
-	t_timeval		start;	//start value of timer
-}	t_all;
+	t_timeval		start;
+};
 
 /*Utils*/
 void		ft_putnbr(long long n);

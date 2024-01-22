@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/22 15:50:17 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:21:01 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	same_routine(t_philo *p, t_timeval start)
 {
 	pthread_mutex_lock(&p->all->m_all);
 	if (check_death(p, start) == 1)
-	 	return (1);
+		return (1);
 	pthread_mutex_unlock(&p->all->m_all);
 	p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 	p_status(calc_elapsed_time(start), p->id, "is eating", p);
@@ -49,16 +49,16 @@ void	odd(t_philo *p, t_timeval start)
 	int			i;
 
 	i = 0;
-	while (p->all->dead != 1 && i++ < p->all->times_each_must_eat)
+	while (p->all->dead != 1 && i++ < p->all->x_each_must_eat)
 	{
 		odd_util(p, start);
 		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 		if (p->rfork != NULL)
 		{
 			pthread_mutex_lock(p->rfork);
-			pthread_mutex_lock(&p->all->m_all);//
+			pthread_mutex_lock(&p->all->m_all);
 			p->has_rfork = 1;
-			pthread_mutex_unlock(&p->all->m_all);//
+			pthread_mutex_unlock(&p->all->m_all);
 		}
 		else if (rfork_is_null(p, start) == 1)
 			return ;
@@ -68,7 +68,7 @@ void	odd(t_philo *p, t_timeval start)
 		pthread_mutex_unlock(&p->all->m_all);
 		if (same_routine(p, start) == 1)
 			return ;
-		if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
+		if (p->all->x_each_must_eat != (-1) && i == p->all->x_each_must_eat)
 			p->all->sim_done = 1;
 	}
 }
@@ -78,8 +78,8 @@ void	even(t_philo *p, t_timeval start)
 	int			i;
 
 	i = 0;
-	while (p->all->dead != 1 && (i++ < p->all->times_each_must_eat
-			|| p->all->times_each_must_eat == (-1)) && p->all->sim_done != 1)
+	while (p->all->dead != 1 && (i++ < p->all->x_each_must_eat
+			|| p->all->x_each_must_eat == (-1)) && p->all->sim_done != 1)
 	{
 		if (p->rfork != NULL)
 		{
@@ -103,7 +103,7 @@ void	even(t_philo *p, t_timeval start)
 
 void	*thread_func(void *phi)
 {
-	t_philo	*p;
+	t_philo		*p;
 	t_timeval	start;
 
 	p = (t_philo *)phi;
@@ -124,7 +124,8 @@ int	create_threads(t_all *all)
 	i = 0;
 	while (i < all->nb_p)
 	{
-		if (pthread_create(&(p[i].thr_id), NULL, &thread_func, &all->phi_arr[i]) != 0)
+		if (pthread_create(&(p[i].thr_id), NULL,
+				&thread_func, &all->phi_arr[i]) != 0)
 			return (write_error("pthread_create failed"));
 		i++;
 	}

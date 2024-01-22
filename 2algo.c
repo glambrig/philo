@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:49:29 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/22 15:51:49 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:22:32 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	even_util(t_philo *p, t_timeval start, int i)
 	p->has_lfork = 1;
 	if (same_routine(p, start) == 1)
 		return (1);
-	if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
+	if (p->all->x_each_must_eat != (-1) && i == p->all->x_each_must_eat)
 		p->all->sim_done = 1;
 	return (0);
 }
