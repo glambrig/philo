@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   algo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 17:37:36 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 14:55:40 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,24 @@ int	same_routine(t_philo *p, t_timeval start)
 	return (0);
 }
 
+// int	odd_util(t_philo *p, t_timeval start, int i)
+// {
+// 	if (rfork_is_null(p, start))
+// 		return (1);
+// 	pthread_mutex_lock(&p->all->m_all);
+// 	if (check_death(p, start) == 1)
+// 		return (1);
+// 	pthread_mutex_unlock(&p->all->m_all);
+// 	if (same_routine(p, start) == 1)
+// 		return (1);
+// 	if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
+// 	{
+// 		p->all->sim_done = 1;
+// 		return (1);
+// 	}
+// 	return (0);
+// }
+
 /*
 	usleep gives time for even p's to start eating
 	rfork == NULL means that there's only one philosopher
@@ -82,7 +100,7 @@ void	odd(t_philo *p)
 			p->has_rfork = 1;
 			pthread_mutex_unlock(&p->all->m_all);//
 		}
-		else if (rfork_is_null(p, start))
+		else if (rfork_is_null(p, start) == 1)
 			return ;
 		pthread_mutex_lock(&p->all->m_all);
 		if (check_death(p, start) == 1)
@@ -91,12 +109,8 @@ void	odd(t_philo *p)
 		if (same_routine(p, start) == 1)
 			return ;
 		if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
-		{
 			p->all->sim_done = 1;
-			return ;
-		}
 	}
-	return ;
 }
 
 void	even(t_philo *p)
@@ -107,7 +121,8 @@ void	even(t_philo *p)
 	gettimeofday(&start, NULL);
 	i = 0;
 	while (p->all->dead != 1 && (i++ < p->all->times_each_must_eat
-			|| p->all->times_each_must_eat == (-1)))
+			|| p->all->times_each_must_eat == (-1))
+		&& p->all->sim_done != 1)
 	{
 		if (p->rfork != NULL)
 		{
@@ -117,12 +132,14 @@ void	even(t_philo *p)
 		}
 		else if (rfork_is_null(p, start))
 			return ;
+		pthread_mutex_lock(&p->all->m_all);
 		if (check_death(p, start) == 1)
 		{
 			p->has_rfork = 0;
 			pthread_mutex_unlock(p->rfork);
 			return ;
 		}
+		pthread_mutex_unlock(&p->all->m_all);
 		pthread_mutex_lock(&p->lfork);
 		p->has_lfork = 1;
 		if (same_routine(p, start) == 1)
