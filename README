@@ -1,4 +1,0 @@
-There's a leak when sim finishes with no deaths, phi_arr isn't freed.
-
-Lots of invalid reads/writes when someone dies. ./philo 5 800 200 200 1
-
