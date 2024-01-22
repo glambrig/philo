@@ -6,7 +6,7 @@
 /*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:24:15 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/22 14:55:40 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 15:50:17 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,80 +18,40 @@ int	same_routine(t_philo *p, t_timeval start)
 	if (check_death(p, start) == 1)
 	 	return (1);
 	pthread_mutex_unlock(&p->all->m_all);
-	//pthread_mutex_lock(&p->all->m_all);//
-	if (p->id % 2 == 0)
-		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
-	else if (p->id % 2 == 1)
-		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
+	p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 	p_status(calc_elapsed_time(start), p->id, "is eating", p);
-	//pthread_mutex_unlock(&p->all->m_all);////
-	//pthread_mutex_lock(&p->all->m_all);//
 	p->last_ate = calc_elapsed_time(start);
-	//pthread_mutex_unlock(&p->all->m_all);////
-	//pthread_mutex_lock(&p->all->m_all);//
 	usleep(p->all->time_to_eat * 1000);
-	//pthread_mutex_unlock(&p->all->m_all);////
 	pthread_mutex_lock(&p->all->m_all);
 	if (check_death(p, start) == 1)
 		return (1);
 	pthread_mutex_unlock(&p->all->m_all);
-		//return (pthread_mutex_unlock(&p->lfork), pthread_mutex_unlock(p->rfork), 1);
-	//pthread_mutex_lock(&p->all->m_all);//
 	p_status(calc_elapsed_time(start), p->id, "is sleeping", p);
-	//pthread_mutex_unlock(&p->all->m_all);////
 	p->has_lfork = 0;
 	p->has_rfork = 0;
 	pthread_mutex_unlock(&p->lfork);
 	pthread_mutex_unlock(p->rfork);
+	pthread_mutex_lock(&p->all->m_all);
 	if (check_death(p, start) == 1)
 		return (1);
-	//pthread_mutex_lock(&p->all->m_all);//
+	pthread_mutex_unlock(&p->all->m_all);
 	usleep(p->all->time_to_sleep * 1000);
-	//pthread_mutex_unlock(&p->all->m_all);////
 	p_status(calc_elapsed_time(start), p->id, "is thinking", p);
 	return (0);
 }
-
-// int	odd_util(t_philo *p, t_timeval start, int i)
-// {
-// 	if (rfork_is_null(p, start))
-// 		return (1);
-// 	pthread_mutex_lock(&p->all->m_all);
-// 	if (check_death(p, start) == 1)
-// 		return (1);
-// 	pthread_mutex_unlock(&p->all->m_all);
-// 	if (same_routine(p, start) == 1)
-// 		return (1);
-// 	if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
-// 	{
-// 		p->all->sim_done = 1;
-// 		return (1);
-// 	}
-// 	return (0);
-// }
 
 /*
 	usleep gives time for even p's to start eating
 	rfork == NULL means that there's only one philosopher
 */
-void	odd(t_philo *p)
+void	odd(t_philo *p, t_timeval start)
 {
-	t_timeval	start;
 	int			i;
 
-	gettimeofday(&start, NULL);
 	i = 0;
 	while (p->all->dead != 1 && i++ < p->all->times_each_must_eat)
 	{
-		usleep(p->all->time_to_die * 10);
-		pthread_mutex_lock(&p->lfork);
-		pthread_mutex_lock(&p->all->m_all);//
-		p->has_lfork = 1;
-		pthread_mutex_unlock(&p->all->m_all);////
-		pthread_mutex_lock(&p->all->m_all);
-		if (check_death(p, start) == 1)
-			return ;
-		pthread_mutex_unlock(&p->all->m_all);
+		odd_util(p, start);
 		p_status(calc_elapsed_time(start), p->id, "has taken a fork", p);
 		if (p->rfork != NULL)
 		{
@@ -113,16 +73,13 @@ void	odd(t_philo *p)
 	}
 }
 
-void	even(t_philo *p)
+void	even(t_philo *p, t_timeval start)
 {
-	t_timeval	start;
 	int			i;
 
-	gettimeofday(&start, NULL);
 	i = 0;
 	while (p->all->dead != 1 && (i++ < p->all->times_each_must_eat
-			|| p->all->times_each_must_eat == (-1))
-		&& p->all->sim_done != 1)
+			|| p->all->times_each_must_eat == (-1)) && p->all->sim_done != 1)
 	{
 		if (p->rfork != NULL)
 		{
@@ -139,29 +96,22 @@ void	even(t_philo *p)
 			pthread_mutex_unlock(p->rfork);
 			return ;
 		}
-		pthread_mutex_unlock(&p->all->m_all);
-		pthread_mutex_lock(&p->lfork);
-		p->has_lfork = 1;
-		if (same_routine(p, start) == 1)
+		if (even_util(p, start, i) == 1)
 			return ;
-		if (p->all->times_each_must_eat != (-1) && i == p->all->times_each_must_eat)
-		{
-			p->all->sim_done = 1;
-			return ;
-		}
 	}
-	return ;
 }
 
 void	*thread_func(void *phi)
 {
 	t_philo	*p;
+	t_timeval	start;
 
 	p = (t_philo *)phi;
+	gettimeofday(&start, NULL);
 	if (p->id % 2 == 0)
-		even(p);
+		even(p, start);
 	else
-		odd(p);
+		odd(p, start);
 	return (NULL);
 }
 

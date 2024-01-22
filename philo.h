@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: glambrig <glambrig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: glambrig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:09:22 by glambrig          #+#    #+#             */
-/*   Updated: 2024/01/21 16:30:39 by glambrig         ###   ########.fr       */
+/*   Updated: 2024/01/22 15:52:11 by glambrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,8 @@ int			error_checks(t_all *all);
 void		free_t_p(t_philo *p, int nb_p);
 long long	calc_elapsed_time(t_timeval start);
 int			create_threads(t_all *all);
+int			same_routine(t_philo *p, t_timeval start);
+int			even_util(t_philo *p, t_timeval start, int i);
+int			odd_util(t_philo *p, t_timeval start);
 
 #endif
